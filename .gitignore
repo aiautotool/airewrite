@@ -1,0 +1,4 @@
+config.json
+*_backup_*.py
+*.bak
+antigravity_proxy/accounts/

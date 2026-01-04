@@ -1,0 +1,8 @@
+{
+    "google_client_id": "YOUR_GOOGLE_CLIENT_ID",
+    "google_client_secret": "YOUR_GOOGLE_CLIENT_SECRET",
+    "gemini_api_keys": [
+        "YOUR_GEMINI_API_KEY_1",
+        "YOUR_GEMINI_API_KEY_2"
+    ]
+}

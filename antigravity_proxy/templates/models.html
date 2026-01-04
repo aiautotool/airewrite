@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Explorer - Antigravity</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #6366f1;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .model-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .model-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+
+        .model-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .model-id {
+            font-family: monospace;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .capabilities {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 5rem;
+            font-size: 1.5rem;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Model Explorer</h1>
+            <a href="/" class="back-link">← Back to Hub</a>
+        </header>
+
+        <div id="loading" class="loading">Fetching models from proxy...</div>
+        <div id="model-grid" class="model-grid"></div>
+    </div>
+
+    <script>
+        async function fetchModels() {
+            try {
+                const res = await fetch('/v1beta/models');
+                const data = await res.json();
+
+                document.getElementById('loading').style.display = 'none';
+                const grid = document.getElementById('model-grid');
+
+                data.models.forEach(m => {
+                    const card = document.createElement('div');
+                    card.className = 'model-card';
+
+                    const id = m.name.replace('models/', '');
+                    let tags = '';
+
+                    if (id.includes('image')) tags += '<span class="tag">Image Gen</span>';
+                    if (id.includes('thinking') || id.includes('high')) tags += '<span class="tag">Reasoning</span>';
+                    if (id.includes('flash')) tags += '<span class="tag">Fast</span>';
+                    if (id.includes('3')) tags += '<span class="tag">Gemini 3</span>';
+                    if (id.includes('claude')) tags += '<span class="tag">Claude</span>';
+
+                    card.innerHTML = `
+                        <span class="model-name">${m.displayName}</span>
+                        <code class="model-id">${id}</code>
+                        <div class="capabilities">
+                            ${tags || '<span class="tag">Standard</span>'}
+                            <span class="tag">Vision</span>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (e) {
+                document.getElementById('loading').textContent = "Error: " + e.message;
+            }
+        }
+
+        fetchModels();
+    </script>
+</body>
+
+</html>

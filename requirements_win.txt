@@ -1,0 +1,6 @@
+customtkinter
+requests
+scrapy
+pyinstaller
+pillow
+openai

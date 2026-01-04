@@ -1,0 +1,7 @@
+customtkinter
+requests
+flask
+beautifulsoup4
+scrapy
+openai
+google-generativeai
